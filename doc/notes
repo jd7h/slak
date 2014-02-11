@@ -1,0 +1,12 @@
+Resources:
+Books
+Introduction Compiler Construction - Mogensen
+Modern Compiler Design - Grune
+
+Websites:
+Real world haskell (http://book.realworldhaskell.org/read/)
+Learn you a haskell (learnyouahaskell.com/chapters)
+
+Modules for parsing:
+UUParseLib (University of Utrecht)
+Parsec
