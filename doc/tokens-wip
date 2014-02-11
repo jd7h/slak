@@ -1,0 +1,11 @@
+Token :=	Identifier 		-- identification
+			Number 			-- integer met sign
+			BiOp 			-- binary operator
+			UnOp 			-- unary operator
+			BoolExp 		-- boolean expressions true or false
+			LPar 			-- '('
+			RPar 			-- ')'
+			Sep 			-- ','
+			Keyword 		-- if, while, else, .hd, .tl, .fst, .snd, Void, Bool, Int (strings)
+			
+		
