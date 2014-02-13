@@ -1,25 +1,26 @@
-Token :=	Id		 		-- identification
-			Number 			-- integer met sign
-			BiOp 			-- binary operator
-			UnOp 			-- unary operator
-			BoolExp 		-- boolean expressions true or false
-			LPar 			-- '('
-			RPar 			-- ')'
-			LBr				-- '['
-			RBr				-- ']'
-			LAcc			-- '{'
-			RAcc			-- '}'
-			Sep 			-- ','
-			SCom			-- '*/'
-			ECom			-- '/*'
-			LCom			-- (line comment //)
-			Keyword 		-- if, while, else
-			Field			-- .hd, .tl, .fst, .snd
-			TypeId			-- Void, Bool, Int
+Token :=	Id: string				-- identification
+			Number: int				-- integer met sign
+			BiOp: string			-- binary operator
+			UnOp: string			-- unary operator
+			BoolExp : {{tt,ff}		-- boolean expressions true or false
+			LPar 					-- '('
+			RPar 					-- ')'
+			LBr						-- '['
+			RBr						-- ']'
+			LAcc					-- '{'
+			RAcc					-- '}'
+			Sep 					-- ','
+			SCom					-- '*/'
+			ECom					-- '/*'
+			LCom					-- (line comment //)
+			Keyword 				-- if, while, else, return
+			Field					-- .hd, .tl, .fst, .snd
+			TypeId					-- Void, Bool, Int
 			
 Samenvoegen?	Op = BiOp | UnOp | Field
 				Par = LPar | RPar
 				Br = RBr | LBr
 				Acc = RAcc | LAcc
 				Com = SCom | ECom | LCom
-				-- zoiets?
+
+

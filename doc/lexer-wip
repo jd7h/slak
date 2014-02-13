@@ -1,0 +1,13 @@
+Lexer
+
+1. lees een file in als string (list van characters)
+readCode :: IOFile -> String
+
+[2. opsplitsing in regels]
+
+3. tokens zoeken dmv reguliere expressies (bijhouden waar je 'leeskop' staat) en de _langste_ match een token toewijzen.
+		Controleer tokens op basis van priority.
+
+		3a. Check voor één token in de huidige regel
+		3b.	Check voor alle tokens in de huidige regel
+		3c. Check voor alle tokens in het hele bestand
