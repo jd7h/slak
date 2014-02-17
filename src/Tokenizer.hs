@@ -33,18 +33,28 @@ keywordmap = Map.fromList
 	]
 
 
+after :: Lexfun -> Lexfun -> Lexfun
+after f g = \x -> 
+	case (f x) of 
+		(_,Nothing) -> g x
+		(r,Just list) -> (r,Just list)
 
-{-
-readOneToken :: Lexfun
-readOneToken (input,index) =
-	let (newreader,tokenlist) = break isTokenstring input --kan niet want break :: (string -> bool) -> string -> (string,string)
-	in case tokenlist of
--}
+lexStr :: Reader -> Tokenlist
+lexStr ([],i) = Nothing
+lexStr (xs,i) = case lexStr (newreader) of 
+				Nothing -> Nothing
+				Just tokens -> Just (tokens ++ fromMaybe [] (lexStr newreader))
+	where (newreader,result) = lexOneToken (xs,i)
+
+lexOneToken :: Lexfun
+lexOneToken = \x -> (lexWhitespace `after` lexComment `after` lexKeyword) x
+
 
 lexComment :: Lexfun
 lexComment (input,index)
 	| isPrefixOf "//" input 		= lexLineComment (fromJust (stripPrefix "//" input)) 
 	| isPrefixOf "/*" input			= lexMultiComment (fromJust (stripPrefix "/*" input))
+	| otherwise						= ((input,index),Nothing)
 	where
 		lexLineComment input = 	let	(comment,(x:rest)) = break (\x -> x == '\n') input
 								in	((rest,index+(length comment)),Just [])
