@@ -1,54 +1,55 @@
 module Tokenizer where
 
-import Data.Char as C
+import Data.List as List
+import Data.Maybe as Maybe
+import Data.Map as Map hiding (map)
+
+-- most naive implementation possible
+
+--this lexer always fails
+--main function
+--lexer :: IOFile -> Tokenlist
+--lexer = \file -> Nothing
 
 data Token = 
 	  Number Int 
 	| Id String
 	| Boolean Bool
 	| Operator
-	| Keyword
-	| Seperator
+	| Keyword 
+	| Seperato
 	| WhiteSpace
 	deriving (Show, Eq)
 
-data Keyword =
-	  If
-	| Then
-	| Else
-	| While
-	deriving (Show, Eq)
+type Reader = (String,Int) 					--leeskop
+type Tokenlist = Maybe [Token]					--lijst van tokens of niets
+type Lexfun = Reader -> (Reader,Tokenlist)	--stdtype van input naar (resultaat,onbewerkte_input)
 
-data Operator = 
-	  Plus
-	| Minus
-	| Times
-	| Div
-	| Neg
-	| Not
-	deriving (Show,Eq)
+keywordmap = fromList
+	[	("if",Keyword),
+		("then",Keyword),
+		("else",Keyword),
+		("while",Keyword)
+	]
 
-data Separator =
-	  LBr
-	| RBr
-	| LAcc
-	| RAcc
-	| LPar
-	| RPar
-	| Comma
-	| Pcomma
-	deriving (Show, Eq)
+{-
+readOneToken :: Lexfun
+readOneToken (input,index) =
+	let (newreader,tokenlist) = break isTokenstring input --kan niet want break :: (string -> bool) -> string -> (string,string)
+	in case tokenlist of
+-}
 
--- type TokenFunction = (String,Int) -> Maybe Token
+lexKeyword :: Lexfun
+lexKeyword (input,index) =
+	let matches = splitOnKeyword input
+	in 
+		case matches of	
+			[] -> ((input,index),Nothing)
+			((keyword,rest):xs)	-> ((rest,index+(length keyword)), Just ([ fromJust (Map.lookup keyword keywordmap)]))
 
-processWhiteSpace :: (String,Int) -> (String,Int)
-processWhiteSpace (s@(x:xs),t)			= if C.isSpace x then processWhiteSpace (xs,t+1) else (s,t)
+keywordlist = ["if","then","else","while","do","return"]
 
-
-processNumber :: (String,Int) -> Maybe Token
-processNumber (s@(x:xs),t)			= if C.isDigit x then tokAdd x (processNumber (xs,t+1)) else Nothing
-	where
-		tokAdd :: Char -> (Maybe Token) -> (Maybe Token)
-		tokAdd s Nothing	= Just (Number (C.digitToInt s))
-		tokAdd s (Just (x@(Number i)))		= Just (Number (read (s:(show i)) :: Int))
-		tokAdd s _ = Nothing
+splitOnKeyword input = (Maybe.catMaybes (map (\keyword -> 
+						if keyword `isPrefixOf` input 
+							then Just (keyword, fromJust (stripPrefix keyword input)) 
+							else Nothing) keywordlist))
