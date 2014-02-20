@@ -155,6 +155,27 @@ lexStr (xs,i) = case lexStr (newreader) of
 lexOneToken :: Lexfun
 lexOneToken = \(input,index) -> (lexWhitespace `andthen` lexComment `andthen` lexInteger `andthen` lexSymbol `andthen` lexKeyword) (input,index)
 
+lexComment :: Lexfun
+lexComment (input,index)
+	| isPrefixOf "//" input			= lexLineComment (drop 2 input)
+	| isPrefixOf "/*" input			= lexMultiComment (drop 2 input)
+	| otherwise						= ((input,index),Nothing)
+	where
+		lexLineComment input = 	let	(comment,(x:rest)) = break (\x -> x == '\n' || x == '\r') input
+								in	((rest,index+(length comment)),Just [])
+		lexMultiComment input =  if "*/" `isInfixOf` input 
+								 then 
+									let (comment,rest) = splitAtEndComment [] input
+									in ((rest,index+length comment),Just [])
+								 else (("",index+length input),Nothing)
+
+
+splitAtEndComment :: String -> String -> (String,String)
+splitAtEndComment acc []			= (acc,[])
+splitAtEndComment acc ('*':'/':xs)  = (acc,xs)
+splitAtEndComment acc (x:xs) 		= splitAtEndComment (acc++[x]) xs
+
+{-
 --lexes comments
 lexComment :: Lexfun
 lexComment (input,index)
@@ -162,7 +183,7 @@ lexComment (input,index)
 	| isPrefixOf "/*" input			= lexMultiComment (fromJust (stripPrefix "/*" input))
 	| otherwise						= ((input,index),Nothing)
 	where
-		lexLineComment input = 	let	(comment,(x:rest)) = break (\x -> x == '\n') input
+		lexLineComment input = 	let	(comment,(x:rest)) = break (\x -> x == '\n' || x == "\r") input
 								in	((rest,index+(length comment)),Just [])
 		lexMultiComment input = let (comment,rest) = splitAtEndComment [] input
 								in ((rest,index+(length comment)),Just [])
@@ -174,6 +195,7 @@ splitAtEndComment [] _ = ("","")
 splitAtEndComment c (x:xs) = if (x == '*' && (head xs) == '/') 
 								then (c,tail xs) 
 								else splitAtEndComment (c++[x]) xs
+-}
 
 --lexes (and discards) whitespace
 lexWhitespace :: Lexfun
