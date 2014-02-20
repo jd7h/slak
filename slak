@@ -1,0 +1,6 @@
+#!/bin/bash
+
+mkdir -p bin
+ghc src/Main.hs -W -outputdir bin/ -o bin/slak -O -isrc || exit 1
+
+./bin/slak "$@"

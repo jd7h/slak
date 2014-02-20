@@ -1,31 +1,22 @@
 module Options where
 
 import System.Console.GetOpt
---	import Data.Maybe ( fromMaybe )
 
 data Options = Options
-	{ optVerbose     :: Bool
---	, optShowVersion :: Bool
---	, optOutput      :: Maybe FilePath
---	, optInput       :: Maybe FilePath
---	, optLibDirs     :: [FilePath]
+	{ verbose	:: Bool
+	, snail		:: Bool
 	} deriving Show
 
 defaultOptions :: Options
 defaultOptions = Options
-	{ optVerbose     = False
---	, optShowVersion = False
---	, optOutput      = Nothing
---	, optInput       = Nothing
---	, optLibDirs     = []
+	{ verbose	= False
+	, snail	= False
 	}
 
 options :: [OptDescr (Options -> Options)]
 options =
-	[ Option ['v']     ["verbose"]	(NoArg (\ opts -> opts { optVerbose = True }))						"chatty output on stderr"
---	, Option ['V','?'] ["version"]	(NoArg (\ opts -> opts { optShowVersion = True }))					"show version number"
---	, Option ['o']     ["output"]   (OptArg ((\ f opts -> opts { optOutput = Just f }) . fromMaybe "output") "FILE")	"output FILE"
---	, Option ['c']     []     	(OptArg ((\ f opts -> opts { optInput = Just f }) . fromMaybe "input") "FILE") "input FILE", Option ['L']     ["libdir"] (ReqArg (\ d opts -> opts { optLibDirs = optLibDirs opts ++ [d] }) "DIR") "library directory"
+	[ Option ['v']	["verbose"]	(NoArg (\ opts -> opts { verbose = True }))	"Additional descriptive text to StdIO"
+	, Option ['s']	["snail"]	(NoArg (\ opts -> opts { verbose = True }))	"SNAIL"
 	]
 
 parseArguments :: [String] -> IO (Options, [String])

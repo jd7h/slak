@@ -130,13 +130,6 @@ keywordlist =
 	]
 -}
 
---combinator for lexer functions
-andthen :: Lexfun -> Lexfun -> Lexfun
-andthen f g = \x -> 
-	case (f x) of 
-		(_,Nothing) -> g x
-		(r,Just list) -> (r,Just list)
-
 --lexes the whole program string
 lexStr :: Reader -> Tokenlist
 lexStr ([],i) = Nothing
@@ -144,6 +137,13 @@ lexStr (xs,i) = if success then Just (fromJust result ++ (fromMaybe [] (lexStr (
 	where 
 	((rinput,rindex),result) = lexOneToken (xs,i)
 	success = isJust result
+
+--combinator for lexer functions
+andthen :: Lexfun -> Lexfun -> Lexfun
+andthen f g = \x -> 
+	case (f x) of 
+		(_,Nothing) -> g x
+		(r,Just list) -> (r,Just list)
 
 {-
 --lexes one whole program string
