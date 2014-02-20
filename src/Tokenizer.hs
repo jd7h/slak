@@ -39,6 +39,8 @@ data Operator =
 	| Not
 	| GrEq
 	| SmEq
+	| Gr
+	| Sm
 	| Eq
 	| As
 	| And
@@ -79,6 +81,8 @@ reservedSymbols =
 		("!",Op Not),
 		(">=",Op GrEq),
 		("<=",Op SmEq),
+		(">",Op Gr),
+		("<",Op Sm),
 		("==",Op Eq),
 		("=",Op As),
 		("&&",Op And),
