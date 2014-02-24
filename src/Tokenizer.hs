@@ -1,69 +1,14 @@
 module Tokenizer where
 
+import Tokens
+
 import Data.List as List
 import Data.Maybe as Maybe
 import qualified Data.Map as Map hiding (map)
 import qualified Data.Char as C
 
-data Keyword =
-	  If
-	| Then
-	| Else
-	| While
-	| Return
-	deriving (Show, Eq)
-
-data Token = 
-	  Number Int 
-	| Id String
-	| Boolean Bool
-	| Op Operator
-	| Key Keyword
-	| T Type
-	| Sep Separator
-	deriving (Show, Eq)
-
-data Operator = 
-	  Plus
-	| Minus
-	| Times
-	| Div
---	| Neg
-	| Not
-	| GrEq
-	| SmEq
-	| Gr
-	| Sm
-	| Eq
-	| As
-	| And
-	| Or
-	| Concat
-	deriving (Show,Eq)
-
-data Separator =
-	  LBr
-	| RBr
-	| LAcc
-	| RAcc
-	| LPar
-	| RPar
-	| Comma
-	| Pcomma
-	deriving (Show, Eq)
-
-data Type = 
-	  INT
-	| VOID
-	| BOOL	
-	deriving (Show, Eq)
-		
-
 type Reader = (String,Int) 					--leeskop
-type Tokenlist = Maybe [Token]				--lijst van tokens of niets
 type Lexfun = Reader -> (Reader,Tokenlist)	--stdtype van input naar (resultaat,onbewerkte_input)
-
---reservedSymbols = []
 
 reservedSymbols =
 	[	--operators
