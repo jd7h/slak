@@ -23,7 +23,6 @@ data Operator =
 	| Minus
 	| Times
 	| Div
---	| Neg
 	| Not
 	| GrEq
 	| SmEq
@@ -53,6 +52,6 @@ data Type =
 	| BOOL	
 	deriving (Show, Eq)
 
-type Tokenlist = Maybe [Token]				--lijst van tokens of niets
+type Tokenlist = Maybe [Token]
 
 
