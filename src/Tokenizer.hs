@@ -5,13 +5,6 @@ import Data.Maybe as Maybe
 import qualified Data.Map as Map hiding (map)
 import qualified Data.Char as C
 
--- most naive implementation possible
-
---this lexer always fails
---main function
---lexer :: IOFile -> Tokenlist
---lexer = \file -> Nothing
-
 data Keyword =
 	  If
 	| Then
@@ -113,23 +106,6 @@ reservedWords =
 		("return",Key Return)
 	]
 
-
-{-
-keywordmap = Map.fromList
-	[	("if",Keyword),
-		("then",Keyword),
-		("else",Keyword),
-		("while",Keyword)
-	]
-
-keywordlist =
-	[	("if",Keyword),
-		("then",Keyword),
-		("else",Keyword),
-		("while",Keyword)
-	]
--}
-
 --lexes the whole program string
 lexStr :: Reader -> Tokenlist
 lexStr ([],i) = Nothing
@@ -144,16 +120,6 @@ andthen f g = \x ->
 	case (f x) of 
 		(_,Nothing) -> g x
 		(r,Just list) -> (r,Just list)
-
-{-
---lexes one whole program string
-lexStr :: Reader -> Tokenlist
-lexStr ([],i) = Nothing
-lexStr (xs,i) = case lexStr (newreader) of 
-				Nothing -> Nothing
-				Just tokens -> Just (tokens ++ fromMaybe [] (lexStr newreader))
-	where (newreader,result) = lexOneToken (xs,i)
--}
 
 --lexes one token, at the moment chooses FIRST match, must go to LONGEST match
 lexOneToken :: Lexfun
@@ -178,28 +144,6 @@ splitAtEndComment :: String -> String -> (String,String)
 splitAtEndComment acc []			= (acc,[])
 splitAtEndComment acc ('*':'/':xs)  = (acc,xs)
 splitAtEndComment acc (x:xs) 		= splitAtEndComment (acc++[x]) xs
-
-{-
---lexes comments
-lexComment :: Lexfun
-lexComment (input,index)
-	| isPrefixOf "//" input 		= lexLineComment (fromJust (stripPrefix "//" input)) 
-	| isPrefixOf "/*" input			= lexMultiComment (fromJust (stripPrefix "/*" input))
-	| otherwise						= ((input,index),Nothing)
-	where
-		lexLineComment input = 	let	(comment,(x:rest)) = break (\x -> x == '\n' || x == "\r") input
-								in	((rest,index+(length comment)),Just [])
-		lexMultiComment input = let (comment,rest) = splitAtEndComment [] input
-								in ((rest,index+(length comment)),Just [])
-
---splits a string at a comment delimiter
-splitAtEndComment :: String -> String -> (String,String)
-splitAtEndComment c [] = (c,"")
-splitAtEndComment [] _ = ("","")
-splitAtEndComment c (x:xs) = if (x == '*' && (head xs) == '/') 
-								then (c,tail xs) 
-								else splitAtEndComment (c++[x]) xs
--}
 
 --lexes (and discards) whitespace
 lexWhitespace :: Lexfun
@@ -238,22 +182,6 @@ lexSymbol (input,index)
 			longestMatch symbols@(x:xs) = if isJust (lookup symbols reservedSymbols) then Just (symbols, fromJust (lookup symbols reservedSymbols)) else longestMatch xs
 			isWeirdSymbol s = C.isMark s || C.isSymbol s || C.isPunctuation s
 
---lexes special symbols such as operators
-{-
-lexSymbol :: Lexfun
-lexSymbol (input,index)
-	| not (C.isAlphaNum (head input))	=	let 
-											(allSymbols,alphanumrest) = (span (not C.isAlphaNum) input)
-											maybeSymTok = longestMatch allSymbols
-											rest = if isJust maybeSymbol then fromJust (stripPrefix symbol input) else input
-											in if isJust maybeSymbol then ((rest,index+(length symbol)),Just [(assignSymbolToken symbol)])
-	| otherwise					= ((input,index),Nothing)
-	where 
-		isSpecial s = isJust (lookup s reservedSymbols)
-		assignSymbolToken s = fromJust (lookup s reservedSymbols)
-		longestMatch []				= Nothing
-		longestMatch symbols@(x:xs) = if isJust (lookup symbols reservedSymbols) then Just (symbols, else longestMatch xs
--}
 
 --lexes keywords and variable names
 lexKeyword :: Lexfun
