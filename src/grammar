@@ -1,0 +1,79 @@
+/--------------------\
+	The edited
+	grammar for SL
+\--------------------/
+SPL 	= Decl+
+Decl 	= VarDecl | FunDecl
+VarDecl	= Type id '=' Exp ';'
+FunDecl	= RetType id '(' [ FArgs ] ')' '{' VarDecl* Stmt+ '}' --note that in the official grammar, all local variables must be declared beforehand
+RetType	= 'Void' | Type
+Type	= 'Int' | 'Bool' | '(' Type ',' Type ')' | '[' Type ']' | id
+FArgs	= Type id [ ',' FArgs ] -- removed left recursion
+Stmt	= '{' Stmt* '}' 
+		| 'if' '(' Exp ')' Stmt [ 'else' Stmt ] 
+		| 'while' '(' Exp ')' Stmt
+		| id Field '=' Exp ';'
+		| FunCall ';'
+		| 'return' [ Exp ] ';'
+Exp		= Exp2 Op2 Exp | Factor | '(' Exp ',' Exp ')' | Exp2 | '(' Exp ')' --removed left recursion in exp -> exp op2 exp
+Factor	= Expr2 '*' Expr2 -- is not in Exp2, because then we'd have left recursion Exp2 -> Factor -> Exp2 * Exp2
+Exp2	= id Field
+		| Op1 Exp2 
+		| int
+		| 'False' | 'True'
+		| FunCall
+		| '[]'
+Field	= [ ( '.hd' | '.tl' | '.fst' | '.snd' ) Field ] --removed left recursion
+FunCall	= id '(' [ ActArgs ] ')'
+ActArgs	= Exp [ ',' ActArgs ]
+Op2		= '+' | '-' | '/' | '%' 					--removed the '*', which is now in factor
+		| '==' | '<' | '>' | '<=' | '>=' | !=
+		| '&&' | '||'
+		| ':'
+Op1		= '!' | '-'
+int		= [ '-' ] digit+
+id		= alpha ( '_' | alphanum )*
+
+
+
+
+
+/--------------------\
+	The original
+	grammar for SL
+\--------------------/
+
+SPL 	= Decl+
+Decl 	= VarDecl | FunDecl
+VarDecl	= Type id '=' Exp ';'
+FunDecl	= RetType id '(' [ FArgs ] ')' '{' VarDecl* Stmt+ '}'
+RetType	= 'Void' | Type
+Type	= 'Int' | 'Bool' | '(' Type ',' Type ')' | '[' Type ']' | id
+FArgs	= [ FArgs ',' ] Type id												
+
+Stmt	= '{' Stmt* '}' 
+		| 'if' '(' Exp ')' Stmt [ 'else' Stmt ] 
+		| 'while' '(' Exp ')' Stmt
+		| id Field '=' Exp ';'
+		| FunCall ';'
+		| 'return' [ Exp ] ';'
+Exp		= id Field
+		| Exp Op2 Exp
+		| Op1 Exp 
+		| int
+		| 'False' | 'True'
+		| '(' Exp ')'
+		| FunCall
+		| '[]'
+		| '(' Exp ',' Exp ')'
+Field	= [ Field ( '.' 'hd' | '.' 'tl' | '.' 'fst' | '.' 'snd' ) ] 
+FunCall	= id '(' [ ActArgs ] ')'
+ActArgs	= Exp [ ',' ActArgs ]
+Op2		= '+' | '-' | '*' | '/' | '%'
+		| '==' | '<' | '>' | '<=' | '>=' | !=
+		| '&&' | '||'
+		| ':'
+Op1		= '!' | '-'
+int		= [ '-' ] digit+
+id		= alpha ( '_' | alphanum )*
+
