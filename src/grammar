@@ -26,17 +26,38 @@ Exp2	= id Field
 Field	= [ ( '.hd' | '.tl' | '.fst' | '.snd' ) Field ] --removed left recursion
 FunCall	= id '(' [ ActArgs ] ')'
 ActArgs	= Exp [ ',' ActArgs ]
-Op2		= '+' | '-' | '/' | '%' 					--removed the '*', which is now in factor
-		| '==' | '<' | '>' | '<=' | '>=' | !=
-		| '&&' | '||'
-		| ':'
+Op2		= MathOp | RelOp | BoolOp | ListOp
+RelOp	= '==' | '<' | '>' | '<=' | '>=' | !=
+BoolOp	= '&&' | '||'
+ListOp	= ':'
+MathOp  = '+' | '-' | '/' | '%' 					--removed the '*', which is now in factor
 Op1		= '!' | '-'
 int		= [ '-' ] digit+
 id		= alpha ( '_' | alphanum )*
 
 
+--------draft version expressions ----------
+Expression = id FieldOrArgs | Exp-1
+FieldOrArgs = '(' -funcall met args ')' | Field
+Exp-1	= Exp0 BExp
+BExp	= '&&' Exp-1 | '||' Exp-1 | e
+Exp0	= Exp0.5 Rexp
+Rexp	= '<' Exp0 | '<=' Exp0 | '==' Exp0 | '>' Exp0 | '>=' Exp0 | '!=' Exp0 | e
+Exp0.5	= Exp1 Unexp
+Unexp	= '!' Exp0.5 | ':' Exp0.5 --klopt dit wel?
+Exp1	= Term Pexp
+Pexp	= '+' Exp1 | '-' Exp1 | e
+Term	= Factor Term2
+Fexp	= '*' Term | '/' Term | '%' Term | e
+Factor	= '(' Exp0 TupPar | int | id | 'True' | 'False' | []
+TupPar	= ',' Exp0 ')' | ')'
 
-
+---------voorbeeld expressions ------------
+<Exp> ::= <Term> <Exp'>
+<Exp'> ::= + <Exp> | - <Exp> | ε
+<Term> ::= <Factor> <Term'>
+<Term'> ::= * <Term> | / <Term> | ε
+<Factor> ::= x | y | ... | ( <Exp> ) | - <Factor>
 
 /--------------------\
 	The original

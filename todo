@@ -1,9 +1,10 @@
-- grammatica met info uit webpagine
-- tokenizer iets uitbreiden met keywords (return)???
-- AST maken als module
-- basic parser operations (herkennen van simpele tokens, vb: parseSep functie)
-- combinatoren geimplementeerd (zoals de 'andthen' uit de lexer)
-- hoger niveau parser operations (voor "grammatica-regels")
+J - grammatica met info uit webpagine
+J - tokenizer iets uitbreiden met keywords (return)??? en 'andthen' veranderen in (\/)
+T - AST maken als module
+J basic parser operations (herkennen van simpele tokens, vb: parseSep functie) {id, keyword, op, ...}
+T combinatoren geimplementeerd (zoals de 'andthen' uit de lexer)
+J hoger niveau parser operations (voor "grammatica-regels")
 - error handling ingevoerd (niet op laag niveau -- op hoger niveau als er niets wordt gevonden -> error met redelijke informatie)
 - skipfunctie maken die, als er een error is, zoekt naar een punt waarop het parseren weer kan worden opgepakt
 - pretty printer
+- dealen met fields na overleg Wouter/docenten
