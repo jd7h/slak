@@ -15,42 +15,45 @@ Stmt	= '{' Stmt* '}'
 		| id Field '=' Exp ';'
 		| FunCall ';'
 		| 'return' [ Exp ] ';'
-Exp		= Exp2 Op2 Exp | Factor | '(' Exp ',' Exp ')' | Exp2 | '(' Exp ')' --removed left recursion in exp -> exp op2 exp
-Factor	= Expr2 '*' Expr2 -- is not in Exp2, because then we'd have left recursion Exp2 -> Factor -> Exp2 * Exp2
-Exp2	= id Field
-		| Op1 Exp2 
-		| int
-		| 'False' | 'True'
-		| FunCall
-		| '[]'
-Field	= [ ( '.hd' | '.tl' | '.fst' | '.snd' ) Field ] --removed left recursion
+Exp		= id FieldOrArgs | Exp1
+FieldArgs = '(' FunCall ')' | Field
+Field	= ( '.hd' | '.tl' | '.fst' | '.snd' )*
 FunCall	= id '(' [ ActArgs ] ')'
-ActArgs	= Exp [ ',' ActArgs ]
-Op2		= MathOp | RelOp | BoolOp | ListOp
-RelOp	= '==' | '<' | '>' | '<=' | '>=' | !=
-BoolOp	= '&&' | '||'
-ListOp	= ':'
-MathOp  = '+' | '-' | '/' | '%' 					--removed the '*', which is now in factor
-Op1		= '!' | '-'
+ActArgs	= Exp (',' Exp)*
+Exp1	= Exp2 BExp
+BExp	= '&&' Exp1 | '||' Exp1 | e	-- boolean expressions
+Exp2	= Exp3 RExp
+RExp	= '<' Exp2 | '<=' Exp2 | '==' Exp2 | '>' Exp2 | '>=' Exp2 | '!=' Exp2 | e --relation expressions
+Exp3	= Exp4 Unexp
+Unexp	= '!' Exp3 | ':' Exp3 --unary operators
+Exp4	= Exp5 Pexp
+Pexp	= '+' Exp4 | '-' Exp4 | e --arithmetic ops
+Exp5	= Exp6 Fexp
+Fexp	= '*' Exp5 | '/' Exp5 | '%' Exp5 | e --more arithmetic ops
+Exp6	= '(' Exp TupPar | int | id | 'True' | 'False' | []
+TupPar	= ',' Exp ')' | ')'
 int		= [ '-' ] digit+
 id		= alpha ( '_' | alphanum )*
 
 
 --------draft version expressions ----------
-Expression = id FieldOrArgs | Exp-1
-FieldOrArgs = '(' -funcall met args ')' | Field
-Exp-1	= Exp0 BExp
-BExp	= '&&' Exp-1 | '||' Exp-1 | e
-Exp0	= Exp0.5 Rexp
-Rexp	= '<' Exp0 | '<=' Exp0 | '==' Exp0 | '>' Exp0 | '>=' Exp0 | '!=' Exp0 | e
-Exp0.5	= Exp1 Unexp
-Unexp	= '!' Exp0.5 | ':' Exp0.5 --klopt dit wel?
-Exp1	= Term Pexp
-Pexp	= '+' Exp1 | '-' Exp1 | e
-Term	= Factor Term2
-Fexp	= '*' Term | '/' Term | '%' Term | e
-Factor	= '(' Exp0 TupPar | int | id | 'True' | 'False' | []
-TupPar	= ',' Exp0 ')' | ')'
+Exp		= id FieldOrArgs | Exp1
+FieldArgs = '(' FunCall ')' | Field
+Field	= ( '.hd' | '.tl' | '.fst' | '.snd' )*
+FunCall	= id '(' [ ActArgs ] ')'
+ActArgs	= Exp (',' Exp)*
+Exp1	= Exp2 BExp
+BExp	= '&&' Exp1 | '||' Exp1 | e	-- boolean expressions
+Exp2	= Exp3 RExp
+RExp	= '<' Exp2 | '<=' Exp2 | '==' Exp2 | '>' Exp2 | '>=' Exp2 | '!=' Exp2 | e --relation expressions
+Exp3	= Exp4 Unexp
+Unexp	= '!' Exp3 | ':' Exp3 --unary operators
+Exp4	= Exp5 Pexp
+Pexp	= '+' Exp4 | '-' Exp4 | e --arithmetic ops
+Exp5	= Exp6 Fexp
+Fexp	= '*' Exp5 | '/' Exp5 | '%' Exp5 | e --more arithmetic ops
+Exp6	= '(' Exp TupPar | int | id | 'True' | 'False' | []
+TupPar	= ',' Exp ')' | ')'
 
 ---------voorbeeld expressions ------------
 <Exp> ::= <Term> <Exp'>
